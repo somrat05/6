@@ -42,6 +42,7 @@ unique(pdata1$source_name_ch1)
 pd = pdata1
 pd$condition = ifelse(grepl("cancer",pd$source_name_ch1),"Case","Control") # keyword "cancer" can change dataset wise
 table(pd$condition)
+pd$condition = factor(pd$condition,levels = c("Control","Case"))
 
 # arrange metadata and raw counts (fixes dimention miss match)
 com.samp = intersect(colnames(data),rownames(pd))

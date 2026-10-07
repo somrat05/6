@@ -6,22 +6,37 @@ install.packages("BiocManager")
 install.packages(c("ggplot2", "ggpubr", "vegan", "remotes"))
 
 BiocManager::install(c("GEOquery", "limma", "edgeR", "DESeq2", "EnhancedVolcano",
-                       "phyloseq", "metagenomeSeq", "ANCOMBC"),
-                     update = FALSE, ask = FALSE)
+                       "phyloseq", "metagenomeSeq"),
+                     update = FALSE, ask = FALSE, force = T)
 
 remotes::install_github("jbisanz/qiime2R", upgrade = "never")
 
+# pick the Bioconductor version that matches this R
+rv   = paste(R.version$major, sub("\\..*", "", R.version$minor), sep = ".")
+bmap = c("4.2" = "3.16", "4.3" = "3.18", "4.4" = "3.20", "4.5" = "3.22", "4.6" = "3.23")
+bioc = paste0("https://bioconductor.org/packages/", bmap[[rv]])
+bioc     # shows which one it picked
+
+# install straight from the Bioconductor website
+install.packages(c("GEOquery", "limma", "edgeR", "DESeq2", "EnhancedVolcano",
+                   "phyloseq", "metagenomeSeq", "ANCOMBC"),
+                 type  = "binary",
+                 repos = c(paste0(bioc, "/bioc"),               # Bioconductor packages
+                           paste0(bioc, "/data/annotation"),    # needed by DESeq2 and phyloseq dependencies
+                           CRAN = "https://cloud.r-project.org"))   # CRAN dependencies
 
 
 # CSV
+library("readr")
+setwd("F:/SLIDES FOR 5_H/506/Practical/Problem_3&4")
 data <- read_tsv("metadata_PRJNA871997.tsv")
 # TSV 
 write.table(data, file = "metadata_PRJNA871997.tsv",sep = "\t",row.names = FALSE,quote = FALSE)
+BiocManager::install("phyloseq",ask = F,update = F)
 
-setwd("C:/Users/LENOVO/Desktop/exam 506/New folder (3)")
 library("phyloseq")
 library("qiime2R")
-library("readr")
+
 
 physeq = qza_to_phyloseq(features = "PRJANA871997-table.qza",taxonomy = "PRJANA871997-taxonomy.qza", metadata = "metadata_PRJNA871997.tsv")
 physeq
